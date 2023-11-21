@@ -1,9 +1,14 @@
 FROM pytorch/pytorch:2.1.0-cuda12.1-cudnn8-devel
-ENV TZ=Asia/Seoul, DEBIAN_FRONTEND=noninteractive, CUDA=/usr/local/cuda, LD_LIBRARY_PATH=$CUDA/include:$CUDA/lib64 WORK=/workspace/work, STORAGE=/workspace/storage, PATH=/root/.cargo/bin:$PATH
+ENV TZ=Asia/Seoul \
+    DEBIAN_FRONTEND=noninteractive \
+    CUDA=/usr/local/cuda LD_LIBRARY_PATH=$CUDA/include:$CUDA/lib64 \
+    WORK=/workspace/work \
+    STORAGE=/workspace/storage \
+    PATH=/root/.cargo/bin:$PATH
 
 RUN apt-get update && apt-get upgrade -y && apt install -y \
     fonts-dejavu unixodbc-dev libcurl4-openssl-dev libzmq3-dev gdebi-core git \
-    vim gcc build-essential pkg-config openssl curl wget expect cmake \
+    vim gcc build-essential pkg-config openssl curl wget expect cmake libssl-dev \
     libgtk-3-dev libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev libx265-dev \
     libjpeg-dev libpng-dev libtiff-dev \
     gfortran openexr libatlas-base-dev libtbb2 libtbb-dev libdc1394-22-dev \
@@ -20,7 +25,9 @@ RUN apt-get update && apt-get upgrade -y && apt install -y \
     echo "local({\n    r <- getOption(\"repos\")\n    r[\"CRAN\"] <- \"https://cran.yu.ac.kr/\"\n    options(repos=r)\n})" > /usr/lib/R/etc/Rprofile.site && \
     echo "install.packages(c(\"tidyverse\", \"IRkernel\"));IRkernel::installspec()" > test.R && \
     Rscript test.R && \
-    rm test.R
+    rm test.R && \
+    git cofnig --global user.email zzkl27ksj@gmail.com && \
+    git config --global user.name zzkl27
 
 WORKDIR /workspace/work
 CMD jupyter notebook > /root/jupyter.log
